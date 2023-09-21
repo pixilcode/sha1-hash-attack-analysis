@@ -11,7 +11,7 @@ pub fn collision_attack(guess_start_value: usize, bit_size: usize) -> usize {
         let string_hash = sha1_hash(i.to_string(), bit_size);
 
         if generated_hashes.contains(&string_hash) {
-            break i;
+            break i - guess_start_value;
         }
 
         generated_hashes.insert(string_hash);
