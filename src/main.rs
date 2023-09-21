@@ -1,4 +1,5 @@
 mod attack;
+mod bench;
 mod hash;
 
 fn main() {

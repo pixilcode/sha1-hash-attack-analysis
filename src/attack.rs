@@ -2,12 +2,6 @@ use std::collections::HashSet;
 
 use crate::hash::sha1_hash;
 
-const BIT_SIZES: [usize; 6] = [8, 11, 16, 22, 27, 32];
-
-const DEFAULT_NUM_THREADS: usize = 8;
-
-const DEFAULT_SAMPLES: usize = 50;
-
 // NOTE: start_value given so that we can have variety in results
 pub fn collision_attack(guess_start_value: usize, bit_size: usize) -> usize {
     let mut generated_hashes: HashSet<Vec<u8>> = HashSet::new();
