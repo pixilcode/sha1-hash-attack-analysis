@@ -4,7 +4,7 @@ use crate::hash::sha1_hash;
 
 // NOTE: start_value given so that we can have variety in results
 pub fn collision_attack(guess_start_value: usize, bit_size: usize) -> usize {
-    let mut generated_hashes: HashSet<Vec<u8>> = HashSet::new();
+    let mut generated_hashes = HashSet::new();
     let mut i: usize = guess_start_value;
 
     loop {
@@ -19,8 +19,7 @@ pub fn collision_attack(guess_start_value: usize, bit_size: usize) -> usize {
     }
 }
 
-pub fn preimage_attack(digest: impl AsRef<[u8]>, bit_size: usize) -> usize {
-    let digest = digest.as_ref();
+pub fn preimage_attack(digest: u32, bit_size: usize) -> usize {
     let mut i: usize = 0;
 
     loop {

@@ -3,7 +3,7 @@ use std::fmt;
 
 use crate::{attack::{collision_attack, preimage_attack}, hash::sha1_hash};
 
-const BIT_SIZES: [usize; 6] = [8, 11, 16, 22, 27, 32];
+const BIT_SIZES: [usize; 6] = [8, 11, 16, 22, 27, 31];
 
 #[derive(Debug)]
 pub struct BenchResult(usize);
