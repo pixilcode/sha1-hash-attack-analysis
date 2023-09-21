@@ -15,7 +15,7 @@ impl fmt::Display for BenchResult {
 }
 
 pub fn run_collision_bench(bit_size: usize, num_samples: usize) -> Vec<BenchResult> {
-	(0..num_samples).into_iter().map(|i| {
+	(0..num_samples).into_iter().map(|_| {
 		let guess_start_value = rand::random();
 				let result = collision_attack(guess_start_value, bit_size);
 				BenchResult(result)
@@ -23,7 +23,7 @@ pub fn run_collision_bench(bit_size: usize, num_samples: usize) -> Vec<BenchResu
 }
 
 pub fn run_preimage_bench(bit_size: usize, num_samples: usize) -> Vec<BenchResult> {
-	(0..num_samples).into_par_iter().map(|i| {
+	(0..num_samples).into_par_iter().map(|_| {
 		let preimage: [char; 16] = rand::random();
 		let preimage: String = String::from_iter(preimage);
 		let preimage_hash = sha1_hash(preimage, bit_size);
