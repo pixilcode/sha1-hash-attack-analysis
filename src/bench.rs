@@ -15,7 +15,7 @@ impl fmt::Display for BenchResult {
 }
 
 pub fn run_collision_bench(bit_size: usize, num_samples: usize) -> Vec<BenchResult> {
-	(0..num_samples).into_iter().map(|_| {
+	(0..num_samples).into_par_iter().map(|_| {
 		let guess_start_value = rand::random();
 				let result = collision_attack(guess_start_value, bit_size);
 				BenchResult(result)
