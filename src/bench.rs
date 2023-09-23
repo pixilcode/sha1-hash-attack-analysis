@@ -1,19 +1,23 @@
 use rayon::prelude::*;
-use std::fmt;
 
 use crate::{
     attack::{collision_attack, preimage_attack},
     hash::sha1_hash,
 };
 
-const BIT_SIZES: [usize; 6] = [8, 11, 16, 22, 27, 31];
+#[derive(Debug, PartialEq)]
+pub struct BenchResult {
+	pub bit_size: usize,
+	pub num_hashes: usize,
+}
 
-#[derive(Debug)]
-pub struct BenchResult(usize);
-
-impl fmt::Display for BenchResult {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        self.0.fmt(f)
+impl PartialOrd for BenchResult {
+    fn partial_cmp(&self, other: &Self) -> Option<std::cmp::Ordering> {
+        if self.bit_size == other.bit_size {
+            self.num_hashes.partial_cmp(&other.num_hashes)
+        } else {
+            self.bit_size.partial_cmp(&other.bit_size)
+        }
     }
 }
 
@@ -23,7 +27,7 @@ pub fn run_collision_bench(bit_size: usize, num_samples: usize) -> Vec<BenchResu
         .map(|_| {
             let guess_start_value = rand::random();
             let result = collision_attack(guess_start_value, bit_size);
-            BenchResult(result)
+            BenchResult { bit_size, num_hashes: result }
         })
         .collect()
 }
@@ -36,7 +40,7 @@ pub fn run_preimage_bench(bit_size: usize, num_samples: usize) -> Vec<BenchResul
             let preimage: String = String::from_iter(preimage);
             let preimage_hash = sha1_hash(preimage, bit_size);
             let result = preimage_attack(preimage_hash, bit_size);
-            BenchResult(result)
+            BenchResult { bit_size, num_hashes: result }
         })
         .collect()
 }
