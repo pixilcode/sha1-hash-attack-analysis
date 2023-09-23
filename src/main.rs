@@ -9,18 +9,23 @@ mod hash;
 
 const BIT_SIZES: [usize; 5] = [8, 11, 16, 19, 24];
 
-const COLLISION_SAMPLE_SIZE: usize = 10;
-const PREIMAGE_SAMPLE_SIZE: usize = 10;
+const DEFAULT_COLLISION_SAMPLE_SIZE: usize = 1000;
+const DEFAUTL_PREIMAGE_SAMPLE_SIZE: usize = 100;
 
 fn main() {
     println!("starting benchmarks...");
 
     let next_results_num = get_next_results_num();
 
+    let collision_sample_size = std::env::var("COLLISION_SAMPLE_SIZE")
+        .ok()
+        .and_then(|s| s.parse::<usize>().ok())
+        .unwrap_or(DEFAULT_COLLISION_SAMPLE_SIZE);
+
     let collision_results: Vec<_> = BIT_SIZES
         .iter()
-        .inspect(|&bit_size| print!("running collision benchmark for bit size {} ... ", bit_size))
-        .map(|&bit_size| bench::run_collision_bench(bit_size, COLLISION_SAMPLE_SIZE))
+        .inspect(|&bit_size| print!("running collision benchmark for bit size {:<2} ... ", bit_size))
+        .map(|&bit_size| bench::run_collision_bench(bit_size, collision_sample_size))
         .inspect(|_| println!("complete!"))
         .flatten()
         .collect();
@@ -30,10 +35,15 @@ fn main() {
     write_to_file(file_path, collision_results);
     println!("complete!");
 
+    let preimage_sample_size = std::env::var("PREIMAGE_SAMPLE_SIZE")
+        .ok()
+        .and_then(|s| s.parse::<usize>().ok())
+        .unwrap_or(DEFAUTL_PREIMAGE_SAMPLE_SIZE);
+
     let preimage_results: Vec<_> = BIT_SIZES
         .iter()
-        .inspect(|&bit_size| print!("running preimage benchmark for bit size {} ... ", bit_size))
-        .map(|&bit_size| bench::run_preimage_bench(bit_size, PREIMAGE_SAMPLE_SIZE))
+        .inspect(|&bit_size| print!("running preimage benchmark for bit size {:<2} ... ", bit_size))
+        .map(|&bit_size| bench::run_preimage_bench(bit_size, preimage_sample_size))
         .inspect(|_| println!("complete!"))
         .flatten()
         .collect();
