@@ -38,7 +38,7 @@ fn main() {
         .flatten()
         .collect();
 
-    let file_path = format!("results/preimage_results_{next_results_num:04}.csv");
+    let file_path = format!("results/{next_results_num:04}_preimage_results.csv");
     print!("writing results to file {} ... ", file_path);
     write_to_file(file_path, preimage_results);
     println!("complete!");
