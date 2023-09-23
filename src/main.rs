@@ -1,7 +1,7 @@
 use std::io::Write;
 use std::path::Path;
 
-use bench::BenchResult;
+use attack::AttackResult;
 
 mod attack;
 mod bench;
@@ -9,8 +9,8 @@ mod hash;
 
 const BIT_SIZES: [usize; 5] = [8, 11, 16, 19, 24];
 
-const COLLISION_SAMPLE_SIZE: usize = 10000;
-const PREIMAGE_SAMPLE_SIZE: usize = 100;
+const COLLISION_SAMPLE_SIZE: usize = 10;
+const PREIMAGE_SAMPLE_SIZE: usize = 10;
 
 fn main() {
     println!("starting benchmarks...");
@@ -20,20 +20,22 @@ fn main() {
     let collision_results: Vec<_> = BIT_SIZES
         .iter()
         .inspect(|&bit_size| print!("running collision benchmark for bit size {} ... ", bit_size))
-        .flat_map(|&bit_size| bench::run_collision_bench(bit_size, COLLISION_SAMPLE_SIZE))
+        .map(|&bit_size| bench::run_collision_bench(bit_size, COLLISION_SAMPLE_SIZE))
         .inspect(|_| println!("complete!"))
+        .flatten()
         .collect();
 
-    let file_path = format!("results/collision_results_{next_results_num:04}.csv");
+    let file_path = format!("results/{next_results_num:04}_collision_results.csv");
     print!("writing results to file {} ... ", file_path);
     write_to_file(file_path, collision_results);
     println!("complete!");
 
     let preimage_results: Vec<_> = BIT_SIZES
         .iter()
-        .inspect(|&bit_size| println!("running preimage benchmark for bit size {} ... ", bit_size))
-        .flat_map(|&bit_size| bench::run_preimage_bench(bit_size, PREIMAGE_SAMPLE_SIZE))
+        .inspect(|&bit_size| print!("running preimage benchmark for bit size {} ... ", bit_size))
+        .map(|&bit_size| bench::run_preimage_bench(bit_size, PREIMAGE_SAMPLE_SIZE))
         .inspect(|_| println!("complete!"))
+        .flatten()
         .collect();
 
     let file_path = format!("results/preimage_results_{next_results_num:04}.csv");
@@ -45,16 +47,28 @@ fn main() {
 }
 
 // write a vector of BenchResults to a csv file
-fn write_to_file(file_path: impl AsRef<Path>, results: Vec<BenchResult>) {
+fn write_to_file(file_path: impl AsRef<Path>, results: Vec<AttackResult>) {
     // open a file for writing
     let mut file = std::fs::File::create(file_path).unwrap();
 
     // write headers
-    writeln!(file, "bit_size,num_hashes").unwrap();
+    writeln!(
+        file,
+        "bit_size,num_hashes,collision_value_a,collision_value_b"
+    )
+    .unwrap();
 
     // write results
     for result in results {
-        writeln!(file, "{},{}", result.bit_size, result.num_hashes).unwrap();
+        writeln!(
+            file,
+            "{},{},{},{}",
+            result.bit_size,
+            result.num_hashes,
+            result.collision_values.0,
+            result.collision_values.1
+        )
+        .unwrap();
     }
 }
 
