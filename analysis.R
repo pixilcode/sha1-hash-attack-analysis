@@ -1,3 +1,4 @@
+# NOTE: install tidyverse and svglite packages if they are not already installed
 library(tidyverse)
 
 analyze_results <- function(title, results, expected_fn) {
@@ -71,9 +72,7 @@ save_plot <- function(plot, filename) {
   )
 }
 
-analyze_iteration <- function(iteration_num) {
-  iteration <- formatC(iteration_num, width = 4, flag = "0")
-  
+analyze_iteration <- function(iteration) {
   collision_title <- "Collision Attack Results"
   collision_results <- read_csv(paste0("./results/", iteration, "_collision_results.csv"))
   collision_expected_fn <- function(x) 2^(x/2)
