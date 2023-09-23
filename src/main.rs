@@ -10,7 +10,7 @@ mod hash;
 const BIT_SIZES: [usize; 5] = [8, 11, 16, 19, 24];
 
 const DEFAULT_COLLISION_SAMPLE_SIZE: usize = 1000;
-const DEFAUTL_PREIMAGE_SAMPLE_SIZE: usize = 100;
+const DEFAULT_PREIMAGE_SAMPLE_SIZE: usize = 100;
 
 fn main() {
     println!("starting benchmarks...");
@@ -38,7 +38,7 @@ fn main() {
     let preimage_sample_size = std::env::var("PREIMAGE_SAMPLE_SIZE")
         .ok()
         .and_then(|s| s.parse::<usize>().ok())
-        .unwrap_or(DEFAUTL_PREIMAGE_SAMPLE_SIZE);
+        .unwrap_or(DEFAULT_PREIMAGE_SAMPLE_SIZE);
 
     let preimage_results: Vec<_> = BIT_SIZES
         .iter()
